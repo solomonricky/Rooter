@@ -196,6 +196,34 @@ detect_mac80211() {
 				;;
 		esac
 
+		SSID="OpenWrt"
+		SSID5G="OpenWrt_5G"
+		PASSW="rooter2017"
+		if [ -e /etc/customwifi ]; then
+			I=0
+			while IFS=$'\n' read -r line
+			do
+				if [ $I = 0 ];then
+					SSID="$line"
+					I=1
+				else
+					if [ $I = 1 ];then
+						SSID5G="$line"
+						I=2
+					else
+						PASSW="$line"
+						break
+					fi
+				fi
+
+			done < /etc/customwifi
+		fi
+		if [ $channel -lt 15 ]; then
+			SSID="$SSID"
+		else
+			SSID="$SSID5G"
+		fi
+		
 		uci -q batch <<-EOF
 			set wireless.${name}=wifi-device
 			set wireless.${name}.type=mac80211
@@ -203,14 +231,15 @@ detect_mac80211() {
 			set wireless.${name}.channel=${channel}
 			set wireless.${name}.band=${mode_band}
 			set wireless.${name}.htmode=$htmode
-			set wireless.${name}.disabled=1
+			set wireless.${name}.disabled=0
+			set wireless.${name}.noscan=0
+			set wireless.${name}.country='MY'
 
 			set wireless.default_${name}=wifi-iface
 			set wireless.default_${name}.device=${name}
 			set wireless.default_${name}.network=lan
 			set wireless.default_${name}.mode=ap
-			set wireless.default_${name}.ssid=OpenWrt
-			set wireless.default_${name}.encryption=none
+			set wireless.default_${name}.ssid="$SSID"
 EOF
 		uci -q commit wireless
 	done
