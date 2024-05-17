@@ -1,5 +1,5 @@
-src-git packages https://github.com/immortalwrt/packages.git
-src-git luci https://github.com/immortalwrt/luci.git
+src-git packages https://github.com/solomonricky/packages.git;immortalwrt
+src-git luci https://github.com/solomonricky/luci.git;immortalwrt
 src-git routing https://github.com/openwrt/routing.git
 src-git telephony https://github.com/openwrt/telephony.git
 #src-git-full video https://github.com/openwrt/video.git
